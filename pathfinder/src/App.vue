@@ -8,10 +8,9 @@
 </template>
 
 <script lang="ts">
-import nodeTest from 'node:test';
 import { Vue, Component } from 'vue-property-decorator';
-import Button from './components/Button.vue';
-import {GridNode,Coordinates,colors,NodeType} from './types'
+import Button from '@/components/Button.vue';
+import {GridNode,Coordinates,colors,NodeType} from '@/types'
 
 @Component({ components: {Button} })
 export default class App extends Vue {
