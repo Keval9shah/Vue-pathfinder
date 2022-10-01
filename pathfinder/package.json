@@ -14,8 +14,6 @@
     "vue-template-compiler": "^2.6.12"
   },
   "devDependencies": {
-    "@syncfusion/ej2-richtexteditor": "20.1.60",
-    "@syncfusion/ej2-filemanager": "^20.1.60",
     "typescript": "^3.5.3",
     "@vue/cli-service": "~5.0.0",
     "vue-template-compiler": "^2.6.12"
