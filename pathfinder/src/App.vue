@@ -1,16 +1,18 @@
 <template>
-    <div v-for="row in nodes">
-        <Button v-for="node in row" :y="row" :x="node"></Button>
-        <br>
+    <div>
+        <template v-for="row in nodes">
+            <GridButton v-for="node in row" :y="row" :x="node"></GridButton>
+            <br>
+        </template>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import Button from '@/components/Button.vue';
+import GridButton from '@/components/GridButton.vue';
 import {GridNode,Coordinates,colors,NodeType} from '@/types'
 
-@Component({ components: {Button} })
+@Component({ components: { GridButton } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
