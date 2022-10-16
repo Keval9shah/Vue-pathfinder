@@ -2,21 +2,20 @@
     <button :style="'background-color:'+color" @click="buttonClicked"></button>
 </template>
 
-<script lang="ts">
+<script>
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { Coordinates } from "@/types";
 
 @Component({})
 export default class GridButton extends Vue {
-    @Prop({default: 0}) x!: number;
-    @Prop({default: 0}) y!: number;
-    @Prop({default: ''}) color!: string;
+    @Prop({default: 0}) x;
+    @Prop({default: 0}) y;
+    @Prop({default: ''}) color;
 
     buttonClicked() {
         this.$emit('buttonClicked', {
             x: this.x,
             y: this.y,
-        } as Coordinates)
+        })
     }
 }
 </script>
@@ -26,5 +25,8 @@ export default class GridButton extends Vue {
 button {
     width: 52px;
     height: 52px;
+    border: 1px solid grey;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
 }
 </style>
