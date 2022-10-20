@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-for="row in nodes">
-            <GridButton v-for="node in row" :color="nodes[node.y][node.x].color" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
+            <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
             <br>
         </template>
     </div>
@@ -10,7 +10,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
-import { GridNode, Coordinates, colors, NodeType } from '@/types'
+import { GridNode, Coordinates, colors, NodeType } from '@/types';
 
 @Component({ components: { GridButton } })
 export default class App extends Vue {
@@ -23,26 +23,30 @@ export default class App extends Vue {
 
     handleClick(location: Coordinates) {
         let currentNode = this.nodes[location.y][location.x];
+
         if(currentNode.type == NodeType.blank) {
             currentNode.type = NodeType.obstacle;
             return;
-        }
-        else if(currentNode.type == NodeType.obstacle) {
+
+        } else if(currentNode.type == NodeType.obstacle) {
             currentNode.type = NodeType.blank;
+
             if(!this.source.exists) {
                 currentNode.type = NodeType.source;
-                this.source = {
-                    x: currentNode.x,
-                    y: currentNode.y,
-                    exists: true
-                }
+                this.source = { x: currentNode.x, y: currentNode.y, exists: true };
+
             } else if(!this.destination.exists) {
                 currentNode.type = NodeType.destination;
-                this.destination = {
-                    x: currentNode.x,
-                    y: currentNode.y,
-                    exists: true
-                }
+                this.destination = { x: currentNode.x, y: currentNode.y, exists: true };
+            }
+        } else {
+            if(currentNode.type == NodeType.source) {
+                currentNode.type = NodeType.blank;
+                this.source = { x: -1, y: -1, exists: false };
+
+            } else {
+                currentNode.type = NodeType.blank;
+                this.destination = { x: -1, y: -1, exists: false };
             }
         }
     }
@@ -50,19 +54,15 @@ export default class App extends Vue {
     constructGrid(newRowSize: number, newColumnSize: number) {
         this.rowSize = newRowSize;
         this.columnSize = newColumnSize;
-        for (let rowNum = 0; rowNum < newRowSize; rowNum++) {
+        for(let rowNum = 0; rowNum < newRowSize; rowNum++) {
             !this.nodes[rowNum] && this.nodes.push([]);
-            for (let columnNum = 0; columnNum < newColumnSize; columnNum++) {
+            for(let columnNum = 0; columnNum < newColumnSize; columnNum++) {
                 if(this.nodes[rowNum][columnNum]) { continue; }
                 this.nodes[rowNum].push({
                     x: columnNum,
                     y: rowNum,
-                    get color() {
-                        return colors[this.type as NodeType];
-                    },
                     fDist: Math.max(),
                     type: NodeType.blank,
-                    gDist: 0,
                     visited: false
                 });
             }
@@ -70,9 +70,9 @@ export default class App extends Vue {
     }
 
     mounted() {
+        // initial grid construction
         this.constructGrid(5,12);
     }
 }
 
-// got it working but still ts not working!!!!
 </script>
