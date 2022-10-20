@@ -1,4 +1,4 @@
-# 
+# pathfinder
 
 ## Project setup
 ```

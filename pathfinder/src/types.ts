@@ -21,6 +21,10 @@ export interface GridNode extends Coordinates {
     visited: boolean;
     color: string;
     type: NodeType;
+    hDist?: number;
+    gDist?: number;
+    fDist?: number;
+    parent?: Coordinates;
 }
 
 export const colors: Colors = {

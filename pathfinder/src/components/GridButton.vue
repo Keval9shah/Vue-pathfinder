@@ -1,15 +1,15 @@
 <template>
-    <button :style="'background-color:'+color" @click="buttonClicked"></button>
+    <button :style="'background-color:' + color" @click="buttonClicked"></button>
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class GridButton extends Vue {
-    @Prop({default: 0}) x;
-    @Prop({default: 0}) y;
-    @Prop({default: ''}) color;
+    @Prop({default: 0}) x!: number;
+    @Prop({default: 0}) y!: number;
+    @Prop({default: ''}) color!: string;
 
     buttonClicked() {
         this.$emit('buttonClicked', {

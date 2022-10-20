@@ -7,53 +7,37 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
+import { GridNode, Coordinates, colors, NodeType } from '@/types'
 
 @Component({ components: { GridButton } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
     columnSize = 0;
-    nodes = [];
-    source = {
-        x:undefined,
-        y:undefined,
-        exists:false
-    };
-    destination = {
-        x:undefined,
-        y:undefined,
-        exists:false
-    };
+    nodes: GridNode[][] = [];
+    source = { exists:false } as Coordinates;
+    destination = { exists:false } as Coordinates;
 
-    colors = {
-        blank: "white",
-        obstacle: "black",
-        step: "#008000",
-        source: "#b6cec7",
-        destination: "#b6cec7",
-        destinationFound: "#ffd700"
-    }
-
-    handleClick(location) {
+    handleClick(location: Coordinates) {
         let currentNode = this.nodes[location.y][location.x];
-        if(currentNode.type == "blank") {
-            currentNode.type = "obstacle";
+        if(currentNode.type == NodeType.blank) {
+            currentNode.type = NodeType.obstacle;
             return;
         }
-        else if(currentNode.type == "obstacle") {
-            currentNode.type = "blank";
+        else if(currentNode.type == NodeType.obstacle) {
+            currentNode.type = NodeType.blank;
             if(!this.source.exists) {
-                currentNode.type = "source";
+                currentNode.type = NodeType.source;
                 this.source = {
                     x: currentNode.x,
                     y: currentNode.y,
                     exists: true
                 }
             } else if(!this.destination.exists) {
-                currentNode.type = "destination";
+                currentNode.type = NodeType.destination;
                 this.destination = {
                     x: currentNode.x,
                     y: currentNode.y,
@@ -63,10 +47,9 @@ export default class App extends Vue {
         }
     }
 
-    constructGrid(newRowSize, newColumnSize) {
+    constructGrid(newRowSize: number, newColumnSize: number) {
         this.rowSize = newRowSize;
         this.columnSize = newColumnSize;
-        let self = this;
         for (let rowNum = 0; rowNum < newRowSize; rowNum++) {
             !this.nodes[rowNum] && this.nodes.push([]);
             for (let columnNum = 0; columnNum < newColumnSize; columnNum++) {
@@ -75,11 +58,12 @@ export default class App extends Vue {
                     x: columnNum,
                     y: rowNum,
                     get color() {
-                        return self.colors[this.type];
+                        return colors[this.type as NodeType];
                     },
                     fDist: Math.max(),
-                    type: "blank",
-                    gDist: 0
+                    type: NodeType.blank,
+                    gDist: 0,
+                    visited: false
                 });
             }
         }
