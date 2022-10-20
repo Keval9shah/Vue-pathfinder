@@ -1,8 +1,7 @@
 <template>
-    <div>
+    <div :style="'grid-template-columns: repeat(' + columnSize + ', 52px);'" class="grid">
         <template v-for="row in nodes">
             <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
-            <br>
         </template>
     </div>
 </template>
@@ -10,7 +9,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
-import { GridNode, Coordinates, colors, NodeType } from '@/types';
+import { GridNode, Coordinates, NodeType } from '@/types';
 
 @Component({ components: { GridButton } })
 export default class App extends Vue {
@@ -71,8 +70,26 @@ export default class App extends Vue {
 
     mounted() {
         // initial grid construction
-        this.constructGrid(5,12);
+        this.constructGrid(8,15);
     }
 }
 
 </script>
+
+<style>
+body {
+    margin: 0;
+    background-color: rgb(218, 218, 218);
+}
+</style>
+
+<style scoped>
+
+.grid {
+    margin: 140px 0 0 50px;
+    width: fit-content;
+    display: grid;
+    box-shadow: 2px 2px 7px rgb(167, 167, 167);
+}
+
+</style>

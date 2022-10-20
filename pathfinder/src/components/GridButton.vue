@@ -19,6 +19,7 @@ export default class GridButton extends Vue {
     get buttonText() {
         if(this.type == NodeType.source) return 'src';
         if([NodeType.destination, NodeType.destinationFound].includes(this.type)) return 'dest';
+        return '';
     }
 
     buttonClicked() {
@@ -35,9 +36,9 @@ export default class GridButton extends Vue {
 button {
     width: 52px;
     height: 52px;
-    border: 1px solid grey;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
+    border: none;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
     cursor: pointer;
 }
 </style>
