@@ -1,13 +1,20 @@
 <template>
-    <div :style="'grid-template-columns: repeat(' + columnSize + ', 52px);'" class="grid">
-        <template v-for="row in nodes">
-            <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
-        </template>
+    <div class="mt-5 ml-5">
+        <div class="row m-0 mb-1">
+            <input class="grid-size-input" type="number" v-model.number="columnSize">
+            X
+            <input class="grid-size-input ml-3" type="number" v-model.number="rowSize">
+        </div>
+        <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
+            <template v-for="row in nodes">
+                <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
+            </template>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import { GridNode, Coordinates, NodeType } from '@/types';
 
@@ -16,9 +23,26 @@ export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
     columnSize = 0;
+    rows = 0;
+    columns = 0;
     nodes: GridNode[][] = [];
     source = { exists:false } as Coordinates;
     destination = { exists:false } as Coordinates;
+
+    // TODO : needs debounce
+    @Watch('columnSize')
+    onColSizeChanged(colVal: number) {
+        if(colVal && colVal>0 && colVal<=120) {
+            this.constructGrid(this.rowSize, colVal);
+        }
+    }
+
+    @Watch('rowSize')
+    onRowSizeChanged(rowVal: number) {
+        if(rowVal && rowVal>0 && rowVal<=70) {
+            this.constructGrid(rowVal, this.columnSize);
+        }
+    }
 
     handleClick(location: Coordinates) {
         let currentNode = this.nodes[location.y][location.x];
@@ -51,8 +75,6 @@ export default class App extends Vue {
     }
 
     constructGrid(newRowSize: number, newColumnSize: number) {
-        this.rowSize = newRowSize;
-        this.columnSize = newColumnSize;
         for(let rowNum = 0; rowNum < newRowSize; rowNum++) {
             !this.nodes[rowNum] && this.nodes.push([]);
             for(let columnNum = 0; columnNum < newColumnSize; columnNum++) {
@@ -66,11 +88,23 @@ export default class App extends Vue {
                 });
             }
         }
+        // node pruning
+        if(this.columns > newColumnSize) {
+            for (let rowNum = 0; rowNum < this.rows; rowNum++) {
+                this.nodes[rowNum].splice(newColumnSize, this.columns);
+            }
+        }
+        if(this.rows > newRowSize) {
+            this.nodes.splice(newRowSize, this.rows);
+        }
+        this.columns = newColumnSize;
+        this.rows = newRowSize;
     }
 
     mounted() {
         // initial grid construction
-        this.constructGrid(8,15);
+        this.rowSize = 8;
+        this.columnSize = 15;
     }
 }
 
@@ -86,10 +120,25 @@ body {
 <style scoped>
 
 .grid {
-    margin: 140px 0 0 50px;
     width: fit-content;
     display: grid;
     box-shadow: 2px 2px 7px rgb(167, 167, 167);
+}
+
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.grid-size-input {
+    width: 35px;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.grid-size-input:hover {
+    text-decoration: underline;
 }
 
 </style>

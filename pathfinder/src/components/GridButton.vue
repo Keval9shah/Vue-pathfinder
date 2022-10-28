@@ -1,4 +1,5 @@
 <template>
+    <!-- TODO : add source and destination icon for UX -->
     <button :style="'background-color:' + color" @click="buttonClicked">{{buttonText}}</button>
 </template>
 
@@ -40,5 +41,6 @@ button {
     border-left: 1px solid black;
     border-top: 1px solid black;
     cursor: pointer;
+    outline: none;
 }
 </style>
