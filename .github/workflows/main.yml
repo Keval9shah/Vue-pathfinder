@@ -14,6 +14,6 @@ jobs:
 
     - name: Experiment
       run: |
-        npm install
         cd pathfinder
+        npm install
         npm run build
