@@ -32,7 +32,6 @@ export default class GridButton extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 button {
     width: 52px;

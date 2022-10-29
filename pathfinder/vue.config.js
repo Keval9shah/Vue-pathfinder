@@ -1,4 +1,14 @@
-const { defineConfig } = require("@vue/cli-service");
-module.exports = defineConfig({
-  transpileDependencies: true,
-});
+const GoogleFontsPlugin = require("google-fonts-webpack-plugin");
+
+module.exports = {
+    chainWebpack: config => {
+        plugins: [
+            new GoogleFontsPlugin({
+                fonts: [
+                    { family: "Caveat" },
+                    { family: "Shalimar" }
+                ]
+            })
+        ]
+    }
+}

@@ -1,14 +1,18 @@
 <template>
     <div class="mt-5 ml-5">
-        <div class="row m-0 mb-1">
+        <div class="row m-0 mb-2">
+            <div class="label">ROW</div>
+            <input class="grid-size-input" type="number" v-model.number="rowSize">
+            <div class="label">COL</div>
             <input class="grid-size-input" type="number" v-model.number="columnSize">
-            X
-            <input class="grid-size-input ml-3" type="number" v-model.number="rowSize">
         </div>
-        <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
-            <template v-for="row in nodes">
-                <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+node.x.toString()"></GridButton>
-            </template>
+        <div class="d-flex">
+            <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
+                <template v-for="row in nodes">
+                    <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
+                </template>
+            </div>
+            <A-star-logo />
         </div>
     </div>
 </template>
@@ -16,9 +20,10 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
+import AStarLogo from'@/components/AStarLogo.vue';
 import { GridNode, Coordinates, NodeType } from '@/types';
 
-@Component({ components: { GridButton } })
+@Component({ components: { GridButton, AStarLogo } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
@@ -33,14 +38,14 @@ export default class App extends Vue {
     @Watch('columnSize')
     onColSizeChanged(colVal: number) {
         if(colVal && colVal>0 && colVal<=120) {
-            this.constructGrid(this.rowSize, colVal);
+            this.constructGrid(this.rowSize, this.columnSize);
         }
     }
 
     @Watch('rowSize')
-    onRowSizeChanged(rowVal: number) {
-        if(rowVal && rowVal>0 && rowVal<=70) {
-            this.constructGrid(rowVal, this.columnSize);
+    onRowSizeChanged(val: number) {
+        if(val && val>0 && val<=70) {
+            this.constructGrid(this.rowSize, this.columnSize);
         }
     }
 
@@ -104,7 +109,7 @@ export default class App extends Vue {
     mounted() {
         // initial grid construction
         this.rowSize = 8;
-        this.columnSize = 15;
+        this.columnSize = 5;
     }
 }
 
@@ -120,6 +125,7 @@ body {
 <style scoped>
 
 .grid {
+    height: fit-content;
     width: fit-content;
     display: grid;
     box-shadow: 2px 2px 7px rgb(167, 167, 167);
@@ -131,7 +137,8 @@ input::-webkit-inner-spin-button {
 }
 
 .grid-size-input {
-    width: 35px;
+    font-size: 22px;
+    width: 45px;
     border: none;
     outline: none;
     background: transparent;
@@ -139,6 +146,15 @@ input::-webkit-inner-spin-button {
 
 .grid-size-input:hover {
     text-decoration: underline;
+}
+
+.label {
+    font-size: 10px;
+    font-weight: bold;
+    height: fit-content;
+    color: rgb(90, 90, 90);
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
 }
 
 </style>
