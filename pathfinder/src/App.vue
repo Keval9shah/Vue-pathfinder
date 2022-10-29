@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-5 ml-5">
+    <div class="my-5 ml-5">
         <div class="row m-0 mb-2">
             <div class="label">ROW</div>
             <input class="grid-size-input" type="number" v-model.number="rowSize">
@@ -37,14 +37,14 @@ export default class App extends Vue {
     // TODO : needs debounce
     @Watch('columnSize')
     onColSizeChanged(colVal: number) {
-        if(colVal && colVal>0 && colVal<=120) {
+        if(colVal && colVal>0 && colVal<=105) {
             this.constructGrid(this.rowSize, this.columnSize);
         }
     }
 
     @Watch('rowSize')
     onRowSizeChanged(val: number) {
-        if(val && val>0 && val<=70) {
+        if(val && val>0 && val<=50) {
             this.constructGrid(this.rowSize, this.columnSize);
         }
     }
@@ -109,7 +109,7 @@ export default class App extends Vue {
     mounted() {
         // initial grid construction
         this.rowSize = 8;
-        this.columnSize = 5;
+        this.columnSize = 12;
     }
 }
 
@@ -144,7 +144,7 @@ input::-webkit-inner-spin-button {
     background: transparent;
 }
 
-.grid-size-input:hover {
+.grid-size-input:hover, .grid-size-input:focus {
     text-decoration: underline;
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="parent">
-        <span :style="'font-family:' + changingFont + ';'"> A </span>
+        <span id="A"> A </span>
         <span class="star d-inline-block"> * </span>
     </div>
 </template>
@@ -10,16 +10,19 @@ import { Vue, Component } from "vue-property-decorator";
 
 @Component({})
 export default class AStarLogo extends Vue {
-    changingFont: string = "'Shalimar', cursive";
+    changingFont: string = "font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;";
     fonts: string[] = [
-        "'Shalimar', cursive",
-        "'Caveat', cursive"
+        "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+        "'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif",
+        "'Verdana, Geneva, Tahoma, sans-serif",
+        "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        "monospace",
+        "Helvetica"
     ];
 
-    // interval = setInterval(() => {
-    //     this.changingFont = this.fonts[this.getRandomNumber(this.fonts.length)]
-    //     console.log(this.changingFont);
-    // },2000);
+    interval = setInterval(() => {
+        (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.getRandomNumber(this.fonts.length)];
+    }, 2500);
 
     getRandomNumber(max: number) {
         return Math.floor(Math.random() * max);
@@ -31,11 +34,11 @@ export default class AStarLogo extends Vue {
 
 .parent {
     user-select: none;
-    padding: 125px 135px;
-    padding-bottom: 0;
+    padding: 125px 75px 0 125px;
     white-space: nowrap;
     font-size: 120px;
     height: fit-content;
+    width: 350px;
     line-height: 120px;
 }
 
