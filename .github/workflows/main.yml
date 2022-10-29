@@ -1,5 +1,19 @@
+name: create_build
+
 on:
   push:
-    branches:
-    - main
-    - run npm run build
+    branches: 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Experiment
+      run: |
+        npm install
+        cd pathfinder
+        npm run build
