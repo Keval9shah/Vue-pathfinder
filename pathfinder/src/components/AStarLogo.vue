@@ -11,22 +11,18 @@ import { Vue, Component } from "vue-property-decorator";
 @Component({})
 export default class AStarLogo extends Vue {
     changingFont: string = "font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;";
+    fontNum: number = 0;
     fonts: string[] = [
-        "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
         "'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif",
         "'Verdana, Geneva, Tahoma, sans-serif",
         "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        "monospace",
         "Helvetica"
     ];
 
     interval = setInterval(() => {
-        (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.getRandomNumber(this.fonts.length)];
-    }, 2500);
-
-    getRandomNumber(max: number) {
-        return Math.floor(Math.random() * max);
-    }
+        this.fontNum = (this.fontNum + 1) % this.fonts.length;
+        (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.fontNum];
+    }, 4500);
 }
 </script>
 
