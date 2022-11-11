@@ -1,7 +1,7 @@
 <template>
     <div class="parent">
         <span id="A"> A </span>
-        <span class="star d-inline-block"> * </span>
+        <span class="star"> * </span>
     </div>
 </template>
 
@@ -39,6 +39,7 @@ export default class AStarLogo extends Vue {
 }
 
 .star {
+    display: inline-block;
     animation: spin 4s linear infinite;
     line-height: 70px;
     padding-top: 25px;

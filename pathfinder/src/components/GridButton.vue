@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { colors, NodeType } from '@/types';
+import { colors, NodeType, typeToText } from '@/types';
 
 @Component({})
 export default class GridButton extends Vue {
@@ -18,9 +18,7 @@ export default class GridButton extends Vue {
     }
 
     get buttonText() {
-        if(this.type == NodeType.source) return 'src';
-        if([NodeType.destination, NodeType.destinationFound].includes(this.type)) return 'dest';
-        return '';
+        return typeToText[this.type];
     }
 
     buttonClicked() {

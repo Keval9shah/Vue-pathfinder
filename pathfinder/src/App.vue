@@ -6,7 +6,7 @@
             <div class="label">COL</div>
             <input class="grid-size-input" type="number" v-model.number="columnSize">
         </div>
-        <div class="d-flex">
+        <div style="display:flex;">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
                 <template v-for="row in nodes">
                     <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
@@ -87,7 +87,6 @@ export default class App extends Vue {
                 this.nodes[rowNum].push({
                     x: columnNum,
                     y: rowNum,
-                    fDist: Math.max(),
                     type: NodeType.blank,
                     visited: false
                 });
@@ -114,13 +113,6 @@ export default class App extends Vue {
 }
 
 </script>
-
-<style>
-body {
-    margin: 0;
-    background-color: rgb(218, 218, 218);
-}
-</style>
 
 <style scoped>
 
@@ -157,4 +149,11 @@ input::-webkit-inner-spin-button {
     font-weight: 600;
 }
 
+</style>
+
+<style>
+body {
+    margin: 0;
+    background-color: rgb(218, 218, 218);
+}
 </style>
