@@ -6,7 +6,7 @@
             <div class="label">COL</div>
             <input class="grid-size-input" type="number" v-model.number="columnSize">
         </div>
-        <div style="display:flex;">
+        <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
                 <template v-for="row in nodes">
                     <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
@@ -22,7 +22,10 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import AStarLogo from'@/components/AStarLogo.vue';
 import { GridNode, Coordinates, NodeType } from '@/types';
+import { debounce } from '@/utils';
 
+// TODO : replace (create vue)/webpack with vite
+// TODO :  obvious add A* algorithm
 @Component({ components: { GridButton, AStarLogo } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
@@ -34,17 +37,18 @@ export default class App extends Vue {
     source = { exists:false } as Coordinates;
     destination = { exists:false } as Coordinates;
 
-    // TODO : needs debounce
     @Watch('columnSize')
     onColSizeChanged(colVal: number) {
-        if(colVal && colVal>0 && colVal<=105) {
-            this.constructGrid(this.rowSize, this.columnSize);
-        }
+        debounce(800, this.onGridSizeChanged, colVal, 105);
     }
 
     @Watch('rowSize')
     onRowSizeChanged(val: number) {
-        if(val && val>0 && val<=50) {
+        debounce(800, this.onGridSizeChanged, val, 55);
+    }
+
+    onGridSizeChanged(val: number, limit: number) {
+        if(val && val>0 && val<=limit) {
             this.constructGrid(this.rowSize, this.columnSize);
         }
     }
@@ -147,6 +151,11 @@ input::-webkit-inner-spin-button {
     color: rgb(90, 90, 90);
     font-family: 'Caveat', cursive;
     font-weight: 600;
+}
+
+.main-section {
+    display: flex;
+    width: fit-content;
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
     <!-- TODO : add source and destination icon for UX -->
-    <button :style="'background-color:' + color" @click="buttonClicked">{{buttonText}}</button>
+    <button :style="'background-color:' + color" @mousedown="buttonClicked">{{buttonText}}</button>
 </template>
 
 <script lang="ts">

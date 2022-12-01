@@ -30,11 +30,11 @@ export default class AStarLogo extends Vue {
 
 .parent {
     user-select: none;
-    padding: 125px 75px 0 125px;
+    padding: 125px 100px 0 125px;
     white-space: nowrap;
     font-size: 120px;
     height: fit-content;
-    width: 350px;
+    width: 120px;
     line-height: 120px;
 }
 
