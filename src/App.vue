@@ -1,12 +1,12 @@
 <template>
-    <div class="mt-5 ml-5">
+    <div class="my-5 ml-5">
         <div class="row m-0 mb-2">
             <div class="label">ROW</div>
             <input class="grid-size-input" type="number" v-model.number="rowSize">
             <div class="label">COL</div>
             <input class="grid-size-input" type="number" v-model.number="columnSize">
         </div>
-        <div class="d-flex">
+        <div style="display:flex;">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
                 <template v-for="row in nodes">
                     <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
@@ -37,14 +37,14 @@ export default class App extends Vue {
     // TODO : needs debounce
     @Watch('columnSize')
     onColSizeChanged(colVal: number) {
-        if(colVal && colVal>0 && colVal<=120) {
+        if(colVal && colVal>0 && colVal<=105) {
             this.constructGrid(this.rowSize, this.columnSize);
         }
     }
 
     @Watch('rowSize')
     onRowSizeChanged(val: number) {
-        if(val && val>0 && val<=70) {
+        if(val && val>0 && val<=50) {
             this.constructGrid(this.rowSize, this.columnSize);
         }
     }
@@ -87,7 +87,6 @@ export default class App extends Vue {
                 this.nodes[rowNum].push({
                     x: columnNum,
                     y: rowNum,
-                    fDist: Math.max(),
                     type: NodeType.blank,
                     visited: false
                 });
@@ -109,18 +108,11 @@ export default class App extends Vue {
     mounted() {
         // initial grid construction
         this.rowSize = 8;
-        this.columnSize = 5;
+        this.columnSize = 12;
     }
 }
 
 </script>
-
-<style>
-body {
-    margin: 0;
-    background-color: rgb(218, 218, 218);
-}
-</style>
 
 <style scoped>
 
@@ -144,7 +136,7 @@ input::-webkit-inner-spin-button {
     background: transparent;
 }
 
-.grid-size-input:hover {
+.grid-size-input:hover, .grid-size-input:focus {
     text-decoration: underline;
 }
 
@@ -157,4 +149,11 @@ input::-webkit-inner-spin-button {
     font-weight: 600;
 }
 
+</style>
+
+<style>
+body {
+    margin: 0;
+    background-color: rgb(218, 218, 218);
+}
 </style>
