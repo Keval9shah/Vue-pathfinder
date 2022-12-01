@@ -1,5 +1,7 @@
 # pathfinder
 
+🔗 <a href="https://keval9shah.github.io/Vue-pathfinder/index">Vue Path Finder</a>
+
 ## Project setup
 ```
 pnpm install
