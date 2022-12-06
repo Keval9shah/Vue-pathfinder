@@ -1,5 +1,10 @@
 <template>
     <div class="my-5 ml-5">
+        <div class="csv-layout">
+            <input ref="fileInput" @change="importCSV" style="display: none;" type="file" accept="text/csv" name="fileupload" />
+            <a href="#" @click="() => fileInput.click()" class="import-button mr-2">Import Layout</a>
+            <a href="#" @click="exportAsCSV" class="export-button mr-2">Export Layout</a>
+        </div>
         <div class="row m-0 mb-2">
             <div class="label">ROW</div>
             <input class="grid-size-input" type="number" v-model.number="rowSize">
@@ -18,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
+import { Vue, Component, Watch, Ref } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import AStarLogo from'@/components/AStarLogo.vue';
 import { GridNode, Coordinates, NodeType } from '@/types';
@@ -36,26 +41,26 @@ export default class App extends Vue {
     nodes: GridNode[][] = [];
     source = { exists:false } as Coordinates;
     destination = { exists:false } as Coordinates;
+    debounceWait: number = 0;
+    @Ref("fileInput") readonly fileInput!: HTMLInputElement;
 
     @Watch('columnSize')
     onColSizeChanged(colVal: number) {
-        debounce(800, this.onGridSizeChanged, colVal, 105);
+        this.updateGridSize(colVal, 105);
     }
 
     @Watch('rowSize')
     onRowSizeChanged(val: number) {
-        debounce(800, this.onGridSizeChanged, val, 55);
+        this.updateGridSize(val, 55);
     }
 
-    onGridSizeChanged(val: number, limit: number) {
-        if(val && val>0 && val<=limit) {
-            this.constructGrid(this.rowSize, this.columnSize);
-        }
+    updateGridSize(val: number, limit: number) {
+        if(!val || val<0 || val>limit) {return;}
+        debounce(this.debounceWait, this.constructGrid, this.rowSize, this.columnSize);
     }
 
     handleClick(location: Coordinates) {
         let currentNode = this.nodes[location.y][location.x];
-
         if(currentNode.type == NodeType.blank) {
             currentNode.type = NodeType.obstacle;
             return;
@@ -105,6 +110,8 @@ export default class App extends Vue {
         if(this.rows > newRowSize) {
             this.nodes.splice(newRowSize, this.rows);
         }
+        (this.source.x>newRowSize -1 || this.source.y>newRowSize -1) && (this.source.exists = false);
+        (this.destination.x>newRowSize -1 || this.destination.y>newRowSize -1) && (this.destination.exists = false);
         this.columns = newColumnSize;
         this.rows = newRowSize;
     }
@@ -113,9 +120,67 @@ export default class App extends Vue {
         // initial grid construction
         this.rowSize = 8;
         this.columnSize = 12;
+        Vue.nextTick(() => this.debounceWait = 500);
     }
-}
 
+    exportAsCSV() {
+        let text = "A* Path Finder Layout File\nAuthor - Keval\n";
+        this.nodes.forEach((row, index) => {
+            let rowText:string[] = [];
+            row.forEach(node => {
+                rowText.push(node.type);
+            });
+            text += rowText.join(",") + ((index == this.nodes.length - 1) ? "" : "\n");
+        });
+        const blob = new Blob([text], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.setAttribute('href', window.URL.createObjectURL(blob));
+        a.setAttribute('download', 'layout.csv');
+        a.click();
+    }
+
+    importCSV() {
+        const importedFile = this.fileInput.files?.length && this.fileInput.files[0];
+        const reader = new FileReader();
+        if(!importedFile) {return;}
+        reader.readAsText(importedFile);
+        reader.onload = event => {
+            let fileTextArr = event.target ? (event.target.result as string).split("\n") : [];
+            if(fileTextArr[0] != "A* Path Finder Layout File") {return;}
+            fileTextArr = fileTextArr.slice(2);
+            this.debounceWait = 0;
+            this.rowSize = fileTextArr.length;
+            this.columnSize = fileTextArr[0].split(",").length;
+            setTimeout(() => {
+                this.nodes.forEach((row, rowIndex) => {
+                    let currentLine = fileTextArr[rowIndex].split(",");
+                    row.forEach((col, colIndex) => {
+                        const nodeTypeInFile = currentLine[colIndex];
+                        (nodeTypeInFile == "source") && (this.source = {x: colIndex, y: rowIndex, exists: true });
+                        (nodeTypeInFile == "destination") && (this.destination = {x: colIndex, y: rowIndex, exists: true });
+                        col.type = nodeTypeInFile as NodeType;
+                    })
+                })
+            }, 200);
+            Vue.nextTick(() => this.debounceWait = 500);
+            // fileTextArr.forEach((row, rowIndex) => {
+            //     !this.nodes[rowIndex] && this.nodes.push(new Array(this.columnSize).fill({}));
+            //     row.split(",").forEach((col, colIndex) => {
+            //         !this.nodes[rowIndex][colIndex] && this.nodes[rowIndex].push({} as GridNode);
+            //         (col == "source") && (this.source = {x: colIndex, y: rowIndex, exists: true });
+            //         (col == "destination") && (this.destination = {x: colIndex, y: rowIndex, exists: true });
+            //         this.nodes[rowIndex][colIndex] = {
+            //             x: colIndex,
+            //             y: rowIndex,
+            //             type: col as NodeType,
+            //             visited: false
+            //         }
+            //     });
+            // })
+        }
+    }
+
+}
 </script>
 
 <style scoped>
@@ -164,5 +229,11 @@ input::-webkit-inner-spin-button {
 body {
     margin: 0;
     background-color: rgb(218, 218, 218);
+}
+
+.csv-layout {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 </style>

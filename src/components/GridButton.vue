@@ -1,11 +1,11 @@
 <template>
     <!-- TODO : add source and destination icon for UX -->
-    <button :style="'background-color:' + color" @mousedown="buttonClicked">{{buttonText}}</button>
+    <button :class="className" @mousedown="buttonClicked"></button>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { colors, NodeType, typeToText } from '@/types';
+import { NodeType } from '@/types';
 
 @Component({})
 export default class GridButton extends Vue {
@@ -13,12 +13,8 @@ export default class GridButton extends Vue {
     @Prop({default: 0}) y!: number;
     @Prop({default: NodeType.blank}) type!: NodeType;
 
-    get color() {
-        return colors[this.type];
-    }
-
-    get buttonText() {
-        return typeToText[this.type];
+    get className() {
+        return this.type;
     }
 
     buttonClicked() {
@@ -30,7 +26,7 @@ export default class GridButton extends Vue {
 }
 </script>
 
-<style scoped>
+<style>
 button {
     width: 52px;
     height: 52px;
@@ -39,5 +35,22 @@ button {
     border-top: 1px solid black;
     cursor: pointer;
     outline: none;
+    font-size: 20px;
+    background-size: cover;
+}
+.blank {
+    background-color: white;
+}
+.obstacle {
+    background-color: black;
+}
+.step {
+    background-color: #008000;
+}
+.source {
+    background-image: url('../assets/source.png');
+}
+.destination {
+    background-image: url('../assets/destination.png');
 }
 </style>

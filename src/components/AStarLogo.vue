@@ -19,10 +19,13 @@ export default class AStarLogo extends Vue {
         "Helvetica"
     ];
 
-    interval = setInterval(() => {
-        this.fontNum = (this.fontNum + 1) % this.fonts.length;
-        (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.fontNum];
-    }, 4500);
+    mounted() {
+        const interval = setInterval(() => {
+            this.fontNum = (this.fontNum + 1) % this.fonts.length;
+            (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.fontNum];
+        }, 4500);
+    }
+
 }
 </script>
 
