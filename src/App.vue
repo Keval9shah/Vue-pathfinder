@@ -10,6 +10,7 @@
             <input class="grid-size-input" type="number" v-model.number="rowSize">
             <div class="label">COL</div>
             <input class="grid-size-input" type="number" v-model.number="columnSize">
+            <button @click="resetLayout" class="button">Reset</button>
         </div>
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
@@ -26,12 +27,13 @@
 import { Vue, Component, Watch, Ref } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import AStarLogo from'@/components/AStarLogo.vue';
+import ImportCSV from '@/components/ImportCSV.vue';
+import Toast from 'vue-toast-notification';
 import { GridNode, Coordinates, NodeType } from '@/types';
-import { debounce } from '@/utils';
+import { debounce, showToast } from '@/utils';
 
-// TODO : replace (create vue)/webpack with vite
-// TODO :  obvious add A* algorithm
-@Component({ components: { GridButton, AStarLogo } })
+// TODO : obvious add A* algorithm
+@Component({ components: { GridButton, AStarLogo, ImportCSV } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
@@ -121,6 +123,7 @@ export default class App extends Vue {
         this.rowSize = 8;
         this.columnSize = 12;
         Vue.nextTick(() => this.debounceWait = 500);
+        showToast("Rows and Cols are editable.",'info');
     }
 
     exportAsCSV() {
@@ -141,12 +144,18 @@ export default class App extends Vue {
 
     importCSV() {
         const importedFile = this.fileInput.files?.length && this.fileInput.files[0];
+        if(!importedFile || (importedFile as File).type != "text/csv") {
+            showToast("Invalid File or File Type.",'error');
+            return;
+        }
         const reader = new FileReader();
-        if(!importedFile) {return;}
         reader.readAsText(importedFile);
         reader.onload = event => {
             let fileTextArr = event.target ? (event.target.result as string).split("\n") : [];
-            if(fileTextArr[0] != "A* Path Finder Layout File") {return;}
+            if(fileTextArr[0] != "A* Path Finder Layout File") {
+                showToast("Invalid File or File Type.",'error');
+                return;
+            }
             fileTextArr = fileTextArr.slice(2);
             this.debounceWait = 0;
             this.rowSize = fileTextArr.length;
@@ -178,6 +187,16 @@ export default class App extends Vue {
             //     });
             // })
         }
+    }
+
+    resetLayout() {
+        this.source.exists = false;
+        this.destination.exists = false;
+        this.nodes.forEach(row => {
+            row.forEach(node => {
+                node.type = NodeType.blank;
+            })
+        })
     }
 
 }
@@ -229,6 +248,15 @@ input::-webkit-inner-spin-button {
 body {
     margin: 0;
     background-color: rgb(218, 218, 218);
+}
+
+.button {
+    cursor: pointer;
+    outline: none;
+    background-color: rgb(244, 244, 244);
+    border-radius: 2px;
+    border: 1px solid black;
+    padding: 1px 8px;
 }
 
 .csv-layout {

@@ -23,7 +23,7 @@ export default class AStarLogo extends Vue {
         const interval = setInterval(() => {
             this.fontNum = (this.fontNum + 1) % this.fonts.length;
             (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.fontNum];
-        }, 4500);
+        }, 5000);
     }
 
 }
@@ -43,7 +43,7 @@ export default class AStarLogo extends Vue {
 
 .star {
     display: inline-block;
-    animation: spin 4s linear infinite;
+    animation: spin 20s linear infinite;
     line-height: 70px;
     padding-top: 25px;
     position: relative;

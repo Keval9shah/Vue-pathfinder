@@ -16,6 +16,7 @@ specifiers:
   vue-property-decorator: ^9.1.2
   vue-router: ^3.5.1
   vue-template-compiler: ^2.6.14
+  vue-toast-notification: ^0.6.3
 
 dependencies:
   core-js: 3.26.1
@@ -23,6 +24,7 @@ dependencies:
   vue-class-component: 7.2.6_vue@2.7.14
   vue-property-decorator: 9.1.2_jtyyyychrtcflhl7vfprhmeb3y
   vue-router: 3.6.5_vue@2.7.14
+  vue-toast-notification: 0.6.3_vue@2.7.14
 
 devDependencies:
   '@vue/cli-plugin-babel': 5.0.8_2vo6k7iwn5qyshgggzrcvv6rba
@@ -6241,6 +6243,15 @@ packages:
   /vue-template-es2015-compiler/1.9.1:
     resolution: {integrity: sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==}
     dev: true
+
+  /vue-toast-notification/0.6.3_vue@2.7.14:
+    resolution: {integrity: sha512-w4daYmEWsUsqDfON1snfhMUxxm+Blf9OISnoOeKrN3f7HqKvH4pQYwIcPOvIr9cX2EOsRReMWfv8Kha03n9nqw==}
+    engines: {node: '>=10.13.0'}
+    peerDependencies:
+      vue: ^2.0.0
+    dependencies:
+      vue: 2.7.14
+    dev: false
 
   /vue/2.7.14:
     resolution: {integrity: sha512-b2qkFyOM0kwqWFuQmgd4o+uHGU7T+2z3T+WQp8UBjADfEv2n4FEMffzBmCKNP0IGzOEEfYjvtcC62xaSKeQDrQ==}

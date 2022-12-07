@@ -15,4 +15,14 @@ function debounce(wait: number, func: Function, ...args: any):void {
     timeoutID = setTimeout(later, wait);
 };
 
-export {debounce};
+import Vue from "vue";
+import { ToastType } from "vue-toast-notification";
+function showToast(message: string, type: ToastType, duration: number = 4000) {
+    Vue.$toast.open({
+        message: message,
+        type: type,
+        duration: duration,
+    })
+}
+
+export { debounce, showToast };

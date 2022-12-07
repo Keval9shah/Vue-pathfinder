@@ -26,7 +26,7 @@ export default class GridButton extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 button {
     width: 52px;
     height: 52px;
@@ -36,7 +36,6 @@ button {
     cursor: pointer;
     outline: none;
     font-size: 20px;
-    background-size: cover;
 }
 .blank {
     background-color: white;
@@ -46,6 +45,12 @@ button {
 }
 .step {
     background-color: #008000;
+}
+.source,.destination {
+    background-color: rgba(255, 255, 255, 0.564);
+    background-size: 2rem;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .source {
     background-image: url('../assets/source.png');
