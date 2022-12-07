@@ -1,5 +1,4 @@
 <template>
-    <!-- TODO : add source and destination icon for UX -->
     <button :class="className" @mousedown="buttonClicked"></button>
 </template>
 

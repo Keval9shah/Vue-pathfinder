@@ -17,6 +17,14 @@ function debounce(wait: number, func: Function, ...args: any):void {
 
 import Vue from "vue";
 import { ToastType } from "vue-toast-notification";
+/**
+ * shows the toast with the following params.
+ * 
+ * css can be found at ```public/vue-toast.css```.
+ * @param message message to show in the toast notification.
+ * @param type type of the toast ex. success, error, info.
+ * @param duration duration for the toast to stay visible.
+ */
 function showToast(message: string, type: ToastType, duration: number = 4000) {
     Vue.$toast.open({
         message: message,
