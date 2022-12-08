@@ -27,13 +27,11 @@
 import { Vue, Component, Watch, Ref } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import AStarLogo from'@/components/AStarLogo.vue';
-import ImportCSV from '@/components/ImportCSV.vue';
-import Toast from 'vue-toast-notification';
 import { GridNode, Coordinates, NodeType } from '@/types';
 import { debounce, showToast } from '@/utils';
 
 // TODO : obvious add A* algorithm
-@Component({ components: { GridButton, AStarLogo, ImportCSV } })
+@Component({ components: { GridButton, AStarLogo } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
@@ -170,6 +168,7 @@ export default class App extends Vue {
                         col.type = nodeTypeInFile as NodeType;
                     })
                 })
+                showToast("Imported the Layout",'success')
             }, 200);
             Vue.nextTick(() => this.debounceWait = 500);
             // fileTextArr.forEach((row, rowIndex) => {
