@@ -30,8 +30,8 @@ button {
     width: 52px;
     height: 52px;
     border: none;
-    border-left: 1px solid black;
-    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
     cursor: pointer;
     outline: none;
     font-size: 20px;

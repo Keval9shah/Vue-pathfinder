@@ -202,12 +202,12 @@ export default class App extends Vue {
 </script>
 
 <style scoped>
-
+/* TODO : add button */
 .grid {
     height: fit-content;
     width: fit-content;
     display: grid;
-    box-shadow: 2px 2px 7px rgb(167, 167, 167);
+    box-shadow: 0px 2px 4px 1px rgb(65 46 46 / 8%);
 }
 
 input::-webkit-inner-spin-button {
@@ -246,7 +246,7 @@ input::-webkit-inner-spin-button {
 <style>
 body {
     margin: 0;
-    background-color: rgb(218, 218, 218);
+    background-color: #ece4dd;
 }
 
 .button {
