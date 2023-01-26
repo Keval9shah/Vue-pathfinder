@@ -1,9 +1,9 @@
 <template>
     <div class="my-5 ml-5">
         <div class="csv-layout">
-            <input ref="fileInput" @change="importCSV" style="display: none;" type="file" accept="text/csv" name="fileupload" />
+            <input ref="fileInput" @change="importJSON" style="display: none;" type="file" accept="application/json" name="fileupload" />
             <a href="#" @click="() => fileInput.click()" class="import-button mr-2">Import Layout</a>
-            <a href="#" @click="exportAsCSV" class="export-button mr-2">Export Layout</a>
+            <a href="#" @click="exportAsJSON" class="export-button mr-2">Export Layout</a>
         </div>
         <div class="row m-0 mb-2">
             <div class="label">ROW</div>
@@ -27,7 +27,7 @@
 import { Vue, Component, Watch, Ref } from 'vue-property-decorator';
 import GridButton from '@/components/GridButton.vue';
 import AStarLogo from'@/components/AStarLogo.vue';
-import { GridNode, Coordinates, NodeType } from '@/types';
+import { GridNode, Coordinates, NodeType, AstarFile } from '@/types';
 import { debounce, showToast } from '@/utils';
 
 // TODO : obvious add A* algorithm
@@ -124,67 +124,46 @@ export default class App extends Vue {
         showToast("Rows and Cols are editable.",'info');
     }
 
-    exportAsCSV() {
-        let text = "A* Path Finder Layout File\nAuthor - Keval\n";
-        this.nodes.forEach((row, index) => {
-            let rowText:string[] = [];
-            row.forEach(node => {
-                rowText.push(node.type);
-            });
-            text += rowText.join(",") + ((index == this.nodes.length - 1) ? "" : "\n");
-        });
-        const blob = new Blob([text], { type: 'text/csv' });
+    exportAsJSON() {
+        let text = JSON.stringify({
+            Title: "A* Path Finder Layout File",
+            Author: "Keval",
+            nodes: this.nodes,
+            source: this.source,
+            destination: this.destination
+        } as AstarFile);
+        const blob = new Blob([text], { type: 'application/json' });
         const a = document.createElement('a');
         a.setAttribute('href', window.URL.createObjectURL(blob));
-        a.setAttribute('download', 'layout.csv');
+        a.setAttribute('download', 'layout.json');
         a.click();
     }
 
-    importCSV() {
+    importJSON() {
         const importedFile = this.fileInput.files?.length && this.fileInput.files[0];
-        if(!importedFile || (importedFile as File).type != "text/csv") {
+        if(!importedFile || (importedFile as File).type != "application/json") {
             showToast("Invalid File or File Type.",'error');
             return;
         }
         const reader = new FileReader();
         reader.readAsText(importedFile);
         reader.onload = event => {
-            let fileTextArr = event.target ? (event.target.result as string).split("\n") : [];
-            if(fileTextArr[0] != "A* Path Finder Layout File") {
+            let fileObj: AstarFile = event.target ? JSON.parse(event.target.result as string) : {};
+            if(fileObj.Title != "A* Path Finder Layout File") {
                 showToast("Invalid File or File Type.",'error');
                 return;
             }
-            fileTextArr = fileTextArr.slice(2);
             this.debounceWait = 0;
-            this.rowSize = fileTextArr.length;
-            this.columnSize = fileTextArr[0].split(",").length;
+
+            this.rowSize = fileObj.nodes.length;
+            this.columnSize = fileObj.nodes[0].length;
             setTimeout(() => {
-                this.nodes.forEach((row, rowIndex) => {
-                    let currentLine = fileTextArr[rowIndex].split(",");
-                    row.forEach((col, colIndex) => {
-                        const nodeTypeInFile = currentLine[colIndex];
-                        (nodeTypeInFile == "source") && (this.source = {x: colIndex, y: rowIndex, exists: true });
-                        (nodeTypeInFile == "destination") && (this.destination = {x: colIndex, y: rowIndex, exists: true });
-                        col.type = nodeTypeInFile as NodeType;
-                    })
-                })
-                showToast("Imported the Layout",'success')
-            }, 200);
+                this.nodes = fileObj.nodes;
+                this.source = fileObj.source;
+                this.destination = fileObj.destination;
+                showToast("Imported the Layout",'success');
+            }, 500);
             Vue.nextTick(() => this.debounceWait = 500);
-            // fileTextArr.forEach((row, rowIndex) => {
-            //     !this.nodes[rowIndex] && this.nodes.push(new Array(this.columnSize).fill({}));
-            //     row.split(",").forEach((col, colIndex) => {
-            //         !this.nodes[rowIndex][colIndex] && this.nodes[rowIndex].push({} as GridNode);
-            //         (col == "source") && (this.source = {x: colIndex, y: rowIndex, exists: true });
-            //         (col == "destination") && (this.destination = {x: colIndex, y: rowIndex, exists: true });
-            //         this.nodes[rowIndex][colIndex] = {
-            //             x: colIndex,
-            //             y: rowIndex,
-            //             type: col as NodeType,
-            //             visited: false
-            //         }
-            //     });
-            // })
         }
     }
 

@@ -19,3 +19,11 @@ export interface GridNode extends Coordinates {
     gDist?: number;
     fDist?: number;
 }
+
+export type AstarFile = {
+    Title: string,
+    Author: string,
+    nodes: GridNode[][],
+    source: Coordinates,
+    destination: Coordinates,
+}
