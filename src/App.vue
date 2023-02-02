@@ -1,21 +1,21 @@
 <template>
     <div class="my-5 ml-5">
-        <div class="csv-layout">
+        <div class="json-layout">
             <input ref="fileInput" @change="importJSON" style="display: none;" type="file" accept="application/json" name="fileupload" />
-            <a href="#" @click="() => fileInput.click()" class="import-button mr-2">Import Layout</a>
-            <a href="#" @click="exportAsJSON" class="export-button mr-2">Export Layout</a>
+            <a href="#" @click="() => fileInput.click()" class="import-button font-caveat mr-2">Import Layout</a>
+            <a href="#" @click="exportAsJSON" class="export-button font-caveat mr-2">Export Layout</a>
         </div>
         <div class="row m-0 mb-2">
-            <div class="label">ROW</div>
-            <input class="grid-size-input" type="number" v-model.number="rowSize">
-            <div class="label">COL</div>
-            <input class="grid-size-input" type="number" v-model.number="columnSize">
+            <div class="label font-caveat">ROW</div>
+            <input class="grid-size-input font-caveat" type="number" v-model.number="rowSize">
+            <div class="label font-caveat">COL</div>
+            <input class="grid-size-input font-caveat" type="number" v-model.number="columnSize">
             <button @click="resetLayout" class="button">Reset</button>
         </div>
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
                 <template v-for="row in nodes">
-                    <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
+                    <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" @buttonEntered="handleEnter" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
                 </template>
             </div>
             <A-star-logo />
@@ -42,6 +42,7 @@ export default class App extends Vue {
     source = { exists:false } as Coordinates;
     destination = { exists:false } as Coordinates;
     debounceWait: number = 0;
+    mouseIsDown = false;
     @Ref("fileInput") readonly fileInput!: HTMLInputElement;
 
     @Watch('columnSize')
@@ -57,6 +58,13 @@ export default class App extends Vue {
     updateGridSize(val: number, limit: number) {
         if(!val || val<0 || val>limit) {return;}
         debounce(this.debounceWait, this.constructGrid, this.rowSize, this.columnSize);
+    }
+
+    handleEnter(location: Coordinates) {
+        if(!this.mouseIsDown) {
+            return;
+        }
+        this.handleClick(location);
     }
 
     handleClick(location: Coordinates) {
@@ -118,6 +126,8 @@ export default class App extends Vue {
 
     mounted() {
         // initial grid construction
+        document.onmousedown = () => this.mouseIsDown = true;
+        document.onmouseup = () => this.mouseIsDown = false;
         this.rowSize = 8;
         this.columnSize = 12;
         Vue.nextTick(() => this.debounceWait = 500);
@@ -140,7 +150,8 @@ export default class App extends Vue {
     }
 
     importJSON() {
-        const importedFile = this.fileInput.files?.length && this.fileInput.files[0];
+        let importedFile = {} as File | undefined | 0;
+        importedFile = this.fileInput.files?.length && this.fileInput.files[0];
         if(!importedFile || (importedFile as File).type != "application/json") {
             showToast("Invalid File or File Type.",'error');
             return;
@@ -211,8 +222,11 @@ input::-webkit-inner-spin-button {
     font-weight: bold;
     height: fit-content;
     color: rgb(90, 90, 90);
-    font-family: 'Caveat', cursive;
     font-weight: 600;
+}
+
+.font-caveat {
+    font-family: 'Caveat', cursive;
 }
 
 .main-section {
@@ -237,9 +251,14 @@ body {
     padding: 1px 8px;
 }
 
-.csv-layout {
+.json-layout {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+a {
+    text-decoration: underline;
+    color: black;
 }
 </style>
