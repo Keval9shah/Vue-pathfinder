@@ -1,5 +1,5 @@
 <template>
-    <button :class="className" @mousedown="buttonClicked"></button>
+    <button :class="className" @mouseenter="buttonEntered" @mousedown="buttonClicked"></button>
 </template>
 
 <script lang="ts">
@@ -14,6 +14,13 @@ export default class GridButton extends Vue {
 
     get className() {
         return this.type;
+    }
+
+    buttonEntered() {
+        this.$emit('buttonEntered', {
+            x: this.x,
+            y: this.y,
+        })
     }
 
     buttonClicked() {

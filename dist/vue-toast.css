@@ -123,7 +123,7 @@
 }
 
 .v-toast__icon {
-    display: none
+    display: none !important;
 }
 
 .v-toast.v-toast--top {

@@ -16,8 +16,12 @@ body {
     margin-bottom:3rem!important;
 }
 
-.ml-5 {
+.ms-5 {
     margin-left:3rem!important;
+}
+
+.ms-2 {
+    margin-left:.5rem!important;
 }
 
 .m-0{
@@ -28,6 +32,6 @@ body {
     margin-bottom:.5rem!important;
 }
 
-.mr-2{
+.me-2{
     margin-right:.5rem!important;
 }

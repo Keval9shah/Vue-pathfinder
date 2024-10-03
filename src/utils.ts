@@ -25,7 +25,7 @@ import { ToastType } from "vue-toast-notification";
  * @param type type of the toast ex. success, error, info.
  * @param duration duration for the toast to stay visible.
  */
-function showToast(message: string, type: ToastType, duration: number = 4000) {
+function showToast(message: string, type: ToastType, duration: number = 10000) {
     Vue.$toast.open({
         message: message,
         type: type,
@@ -33,4 +33,26 @@ function showToast(message: string, type: ToastType, duration: number = 4000) {
     })
 }
 
-export { debounce, showToast };
+/**
+ * shows the toast with the following params.
+ * returns a promise that resolves when the toast is dismissed.
+ * 
+ * css can be found at ```public/vue-toast.css```.
+ * @param message message to show in the toast notification.
+ * @param type type of the toast ex. success, error, info.
+ * @param duration duration for the toast to stay visible.
+ */
+function showToastWithPromise(message: string, type: ToastType, duration: number = 8000): Promise<void> {
+    return new Promise((resolve, reject) => {
+        Vue.$toast.open({
+            message: message,
+            type: type,
+            duration: duration,
+            onDismiss: () => {
+                resolve();
+            }
+        })
+    });
+}
+
+export { debounce, showToast, showToastWithPromise };
