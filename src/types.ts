@@ -10,10 +10,10 @@ export enum NodeType {
     source = "source",
     destination = "destination",
     path = "path",
+    visited = "visited",
 }
 
 export interface GridNode extends Coordinates {
-    visited: boolean;
     type: NodeType;
     hCost: number;
     gCost: number;

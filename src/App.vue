@@ -12,6 +12,7 @@
             <input class="grid-size-input font-caveat" type="number" v-model.number="columnSize">
             <button @click="resetLayout" class="button">Reset</button>
             <button @click="findPath" class="button ms-2">Find Path</button>
+            <button @click="clearPath" class="button ms-2">Clear Path</button>
         </div>
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
@@ -94,7 +95,6 @@ export default class App extends Vue {
                     hCost: 0,
                     fCost: 0,
                     parent: null,
-                    visited: false,
                 };
             } else if (!this.destination.exists) {
                 currentNode.type = NodeType.destination;
@@ -107,7 +107,6 @@ export default class App extends Vue {
                     hCost: 0,
                     fCost: Infinity,
                     parent: null,
-                    visited: false,
                 };
             }
         } else {
@@ -136,7 +135,6 @@ export default class App extends Vue {
                     fCost: Infinity,
                     type: NodeType.blank,
                     parent: null,
-                    visited: false,
                 });
             }
         }
@@ -225,6 +223,26 @@ export default class App extends Vue {
         this.nodes.forEach((row) => {
             row.forEach((node) => {
                 node.type = NodeType.blank;
+                node.parent = null;
+                node.gCost = Infinity;
+                node.hCost = 0;
+                node.fCost = Infinity;
+            });
+        });
+        this.source.exists = false;
+        this.destination.exists = false;
+    }
+
+    clearPath() {
+        this.nodes.forEach((row) => {
+            row.forEach((node) => {
+                if (node.type === NodeType.visited || node.type === NodeType.path) {
+                    node.type = NodeType.blank;
+                    node.parent = null;
+                    node.gCost = Infinity;
+                    node.hCost = 0;
+                    node.fCost = Infinity;
+                }
             });
         });
     }
@@ -267,27 +285,21 @@ export default class App extends Vue {
             const neighbors = this.getNeighbors(currentNode);
 
             for (const neighbor of neighbors) {
-                if (
-                    closedList.includes(neighbor) ||
-                    neighbor.type === "obstacle"
-                )
-                    continue;
-
+                if (closedList.includes(neighbor) || neighbor.type === "obstacle") continue;
+                if(neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
                 const newMovementCostToNeighbor =
                     currentNode.gCost + this.getDistance(currentNode, neighbor);
-                if (
-                    newMovementCostToNeighbor < neighbor.gCost ||
-                    !openList.includes(neighbor)
-                ) {
+                if (newMovementCostToNeighbor < neighbor.gCost || !openList.includes(neighbor)) {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = this.getDistance(neighbor, this.destination);
                     neighbor.fCost = neighbor.gCost + neighbor.hCost;
                     neighbor.parent = currentNode;
-
+                    
                     if (!openList.includes(neighbor)) openList.push(neighbor);
                 }
             }
         }
+        console.log(this.source, this.destination);
     }
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {

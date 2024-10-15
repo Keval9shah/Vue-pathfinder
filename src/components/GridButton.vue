@@ -49,6 +49,9 @@ button {
 .obstacle {
     background-color: black;
 }
+.visited {
+    background-color: #adcabb;
+}
 .path {
     background-color: #008000;
 }
