@@ -49,7 +49,7 @@ button {
 .obstacle {
     background-color: black;
 }
-.step {
+.path {
     background-color: #008000;
 }
 .source,.destination {
