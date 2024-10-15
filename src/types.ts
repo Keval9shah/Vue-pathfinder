@@ -7,23 +7,24 @@ export interface Coordinates {
 export enum NodeType {
     blank = "blank",
     obstacle = "obstacle",
-    step = "step",
     source = "source",
     destination = "destination",
+    path = "path",
+    visited = "visited",
 }
 
 export interface GridNode extends Coordinates {
-    visited: boolean;
     type: NodeType;
-    hDist?: number;
-    gDist?: number;
-    fDist?: number;
+    hCost: number;
+    gCost: number;
+    fCost: number;
+    parent: GridNode | null;
 }
 
 export type AstarFile = {
     Title: string,
     Author: string,
     nodes: GridNode[][],
-    source: Coordinates,
-    destination: Coordinates,
+    source: GridNode,
+    destination: GridNode,
 }
