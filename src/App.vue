@@ -32,7 +32,6 @@ import AStarLogo from "@/components/AStarLogo.vue";
 import { GridNode, Coordinates, NodeType, AstarFile } from "@/types";
 import { debounce, showToastWithPromise, showToast } from "@/utils";
 
-// TODO : obvious add A* algorithm
 @Component({ components: { GridButton, AStarLogo } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
