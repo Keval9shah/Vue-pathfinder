@@ -1,15 +1,15 @@
 <template>
     <div class="my-5 ms-5">
         <div class="json-layout">
-            <input ref="fileInput" @change="importJSON" style="display: none;" type="file" accept="application/json" name="fileupload" />
+            <input ref="fileInput" @change="importJSON" style="display: none" type="file" accept="application/json" name="fileupload" />
             <a href="#" @click="() => fileInput.click()" class="font-caveat me-2">Import Layout</a>
             <a href="#" @click="exportAsJSON" class="font-caveat me-2">Export Layout</a>
         </div>
         <div class="row m-0 mb-2">
             <div class="label font-caveat">ROW</div>
-            <input class="grid-size-input font-caveat" type="number" v-model.number="rowSize">
+            <input class="grid-size-input font-caveat" type="number" v-model.number="rowSize" />
             <div class="label font-caveat">COL</div>
-            <input class="grid-size-input font-caveat" type="number" v-model.number="columnSize">
+            <input class="grid-size-input font-caveat" type="number" v-model.number="columnSize" />
             <button @click="resetLayout" class="button">Reset</button>
             <button @click="findPath" class="button ms-2">Find Path</button>
             <button @click="clearPath" class="button ms-2">Clear Path</button>
@@ -17,7 +17,7 @@
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
                 <template v-for="row in nodes">
-                    <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" @buttonEntered="handleEnter" :key="node.y.toString()+'x'+node.x.toString()"></GridButton>
+                    <GridButton v-for="node in row" :type="nodes[node.y][node.x].type" :y="node.y" :x="node.x" @buttonClicked="handleClick" @buttonEntered="handleEnter" :key="node.y.toString() + 'x' + node.x.toString()"></GridButton>
                 </template>
             </div>
             <AStarLogo />
@@ -60,12 +60,7 @@ export default class App extends Vue {
         if (!val || val < 0 || val > limit) {
             return;
         }
-        debounce(
-            this.debounceWait,
-            this.constructGrid,
-            this.rowSize,
-            this.columnSize
-        );
+        debounce(this.debounceWait, this.constructGrid, this.rowSize, this.columnSize);
     }
 
     handleEnter(location: Coordinates) {
@@ -146,11 +141,8 @@ export default class App extends Vue {
         if (this.rows > newRowSize) {
             this.nodes.splice(newRowSize, this.rows);
         }
-        (this.source.x > newRowSize - 1 || this.source.y > newRowSize - 1) &&
-            (this.source.exists = false);
-        (this.destination.x > newRowSize - 1 ||
-            this.destination.y > newRowSize - 1) &&
-            (this.destination.exists = false);
+        (this.source.x > newRowSize - 1 || this.source.y > newRowSize - 1) && (this.source.exists = false);
+        (this.destination.x > newRowSize - 1 || this.destination.y > newRowSize - 1) && (this.destination.exists = false);
         this.columns = newColumnSize;
         this.rows = newRowSize;
     }
@@ -185,19 +177,14 @@ export default class App extends Vue {
     importJSON() {
         let importedFile = {} as File | undefined | 0;
         importedFile = this.fileInput.files?.length && this.fileInput.files[0];
-        if (
-            !importedFile ||
-            (importedFile as File).type != "application/json"
-        ) {
+        if (!importedFile || (importedFile as File).type != "application/json") {
             showToast("Invalid File or File Type.", "error");
             return;
         }
         const reader = new FileReader();
         reader.readAsText(importedFile);
         reader.onload = (event) => {
-            let fileObj: AstarFile = event.target
-                ? JSON.parse(event.target.result as string)
-                : {};
+            let fileObj: AstarFile = event.target ? JSON.parse(event.target.result as string) : {};
             if (fileObj.Title != "A* Path Finder Layout File") {
                 showToast("Invalid File or File Type.", "error");
                 return;
@@ -247,7 +234,7 @@ export default class App extends Vue {
     }
 
     findPath() {
-        if (!this.source || !this.destination) return;
+        if (!this.source.exists || !this.destination.exists) return;
 
         const openList: GridNode[] = [];
         const closedList: GridNode[] = [];
@@ -258,11 +245,7 @@ export default class App extends Vue {
             // Find the node with the lowest fCost in the open list
             let currentNode = openList[0];
             for (let i = 1; i < openList.length; i++) {
-                if (
-                    openList[i].fCost < currentNode.fCost ||
-                    (openList[i].fCost === currentNode.fCost &&
-                        openList[i].hCost < currentNode.hCost)
-                ) {
+                if (openList[i].fCost < currentNode.fCost || (openList[i].fCost === currentNode.fCost && openList[i].hCost < currentNode.hCost)) {
                     currentNode = openList[i];
                 }
             }
@@ -272,10 +255,7 @@ export default class App extends Vue {
             closedList.push(currentNode);
 
             // Check if we have reached the end node
-            if (
-                currentNode.x === this.destination.x &&
-                currentNode.y === this.destination.y
-            ) {
+            if (currentNode.x === this.destination.x && currentNode.y === this.destination.y) {
                 this.retracePath(this.nodes[this.source.y][this.source.x], this.nodes[this.destination.y][this.destination.x]);
                 return;
             }
@@ -285,20 +265,18 @@ export default class App extends Vue {
 
             for (const neighbor of neighbors) {
                 if (closedList.includes(neighbor) || neighbor.type === "obstacle") continue;
-                if(neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
-                const newMovementCostToNeighbor =
-                    currentNode.gCost + this.getDistance(currentNode, neighbor);
+                if (neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
+                const newMovementCostToNeighbor = currentNode.gCost + this.getDistance(currentNode, neighbor);
                 if (newMovementCostToNeighbor < neighbor.gCost || !openList.includes(neighbor)) {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = this.getDistance(neighbor, this.destination);
                     neighbor.fCost = neighbor.gCost + neighbor.hCost;
                     neighbor.parent = currentNode;
-                    
+
                     if (!openList.includes(neighbor)) openList.push(neighbor);
                 }
             }
         }
-        console.log(this.source, this.destination);
     }
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {
