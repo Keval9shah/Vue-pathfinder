@@ -267,11 +267,11 @@ export default class App extends Vue {
 
             // Get neighboring nodes
             const neighbors = this.getNeighbors(currentNode);
-
             for (const neighbor of neighbors) {
                 if (closedList.includes(neighbor) || neighbor.type === "obstacle") continue;
                 if (neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
-                const newMovementCostToNeighbor = currentNode.gCost + this.getDistance(currentNode, neighbor);
+                // 1 is the distance between two neighboring nodes
+                const newMovementCostToNeighbor = currentNode.gCost + 1;
                 if (newMovementCostToNeighbor < neighbor.gCost || !openList.includes(neighbor)) {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = this.getDistance(neighbor, this.destination);
