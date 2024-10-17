@@ -116,6 +116,7 @@ export default class App extends Vue {
                     fCost: Infinity,
                     parent: null,
                 };
+                this.nodes[currentNode.y][currentNode.x] = this.destination;
             }
         } else {
             if (currentNode.type == NodeType.source) {
@@ -246,6 +247,7 @@ export default class App extends Vue {
                 }
             });
         });
+        this.isPathVisible = false;
     }
 
     findPath() {
@@ -282,7 +284,7 @@ export default class App extends Vue {
                 if (closedList.includes(neighbor) || neighbor.type === "obstacle") continue;
                 if (neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
                 // 1 is the distance between two neighboring nodes
-                const newMovementCostToNeighbor = currentNode.gCost + 1;
+                const newMovementCostToNeighbor = currentNode.gCost + this.getDistance(currentNode, neighbor);
                 if (newMovementCostToNeighbor < neighbor.gCost || !openList.includes(neighbor)) {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = this.getDistance(neighbor, this.destination);
@@ -298,7 +300,7 @@ export default class App extends Vue {
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {
         if (!this.isToggled) {
-            return Math.abs(nodeA.x - nodeB.x) + Math.abs(nodeA.y - nodeB.y);
+            return (Math.abs(nodeA.x - nodeB.x) + Math.abs(nodeA.y - nodeB.y)) * 10;
         }
         const distX = Math.abs(nodeA.x - nodeB.x);
         const distY = Math.abs(nodeA.y - nodeB.y);
