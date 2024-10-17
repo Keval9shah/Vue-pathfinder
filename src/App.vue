@@ -3,7 +3,7 @@
         <div class="json-layout">
             <input ref="fileInput" @change="importJSON" style="display: none" type="file" accept="application/json" name="fileupload" />
             <a href="#" @click="() => fileInput.click()" class="font-caveat me-2">Import Layout</a>
-            <a href="#" @click="exportAsJSON" class="font-caveat me-2">Export Layout</a>
+            <a href="#" @click="exportJSON" class="font-caveat me-2">Export Layout</a>
         </div>
         <div class="row m-0 mb-2">
             <div class="label font-caveat">ROW</div>
@@ -44,6 +44,7 @@ export default class App extends Vue {
     destination = { exists: false } as GridNode;
     debounceWait: number = 0;
     mouseIsDown = false;
+    isPathVisible = false;
     @Ref("fileInput") readonly fileInput!: HTMLInputElement;
 
     @Watch("columnSize")
@@ -71,6 +72,7 @@ export default class App extends Vue {
     }
 
     handleClick(location: Coordinates) {
+        this.isPathVisible && this.clearPath();
         let currentNode = this.nodes[location.y][location.x];
         if (currentNode.type == NodeType.blank) {
             currentNode.type = NodeType.obstacle;
@@ -90,6 +92,7 @@ export default class App extends Vue {
                     fCost: 0,
                     parent: null,
                 };
+                this.nodes[currentNode.y][currentNode.x] = this.source;
             } else if (!this.destination.exists) {
                 currentNode.type = NodeType.destination;
                 this.destination = {
@@ -159,7 +162,8 @@ export default class App extends Vue {
         showToast("Tap once for Obstacles ⚫", "info");
     }
 
-    exportAsJSON() {
+    exportJSON() {
+        this.isPathVisible && this.clearPath();
         let text = JSON.stringify({
             Title: "A* Path Finder Layout File",
             Author: "Keval Shah",
@@ -257,6 +261,7 @@ export default class App extends Vue {
             // Check if we have reached the end node
             if (currentNode.x === this.destination.x && currentNode.y === this.destination.y) {
                 this.retracePath(this.nodes[this.source.y][this.source.x], this.nodes[this.destination.y][this.destination.x]);
+                this.isPathVisible = true;
                 return;
             }
 
@@ -277,6 +282,7 @@ export default class App extends Vue {
                 }
             }
         }
+        this.isPathVisible = true;
     }
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {
@@ -312,7 +318,7 @@ export default class App extends Vue {
         }
 
         path.reverse();
-        let y = path.pop();
+        path.pop();
         this.highlightPath(path); // You can create a method to visually show the path
     }
 
