@@ -13,6 +13,7 @@
             <button @click="resetLayout" class="button">Reset</button>
             <button @click="findPath" class="button ms-2">Find Path</button>
             <button @click="clearPath" class="button ms-2">Clear Path</button>
+            <ToggleSwitch v-model="isToggled" @toggle="onMoveTypeChanged">Diagonal Moves</ToggleSwitch>
         </div>
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
@@ -29,16 +30,18 @@
 import { Vue, Component, Watch, Ref } from "vue-property-decorator";
 import GridButton from "@/components/GridButton.vue";
 import AStarLogo from "@/components/AStarLogo.vue";
+import ToggleSwitch from "@/components/ToggleSwitch.vue";
 import { GridNode, Coordinates, NodeType, AstarFile } from "@/types";
 import { debounce, showToastWithPromise, showToast } from "@/utils";
 
-@Component({ components: { GridButton, AStarLogo } })
+@Component({ components: { GridButton, AStarLogo, ToggleSwitch } })
 export default class App extends Vue {
     // nodes structure grid obj -> nodes array -> row array -> node obj
     rowSize = 0;
     columnSize = 0;
     rows = 0;
     columns = 0;
+    isToggled = false;
     nodes: GridNode[][] = [];
     source = { exists: false } as GridNode;
     destination = { exists: false } as GridNode;
@@ -55,6 +58,14 @@ export default class App extends Vue {
     @Watch("rowSize")
     onRowSizeChanged(val: number) {
         this.updateGridSize(val, 55);
+    }
+
+    onMoveTypeChanged(newVal: boolean) {
+        this.isToggled = newVal;
+        if (this.isPathVisible) {
+            this.clearPath();
+            this.findPath();
+        }
     }
 
     updateGridSize(val: number, limit: number) {
@@ -286,9 +297,13 @@ export default class App extends Vue {
     }
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {
+        if (!this.isToggled) {
+            return Math.abs(nodeA.x - nodeB.x) + Math.abs(nodeA.y - nodeB.y);
+        }
         const distX = Math.abs(nodeA.x - nodeB.x);
         const distY = Math.abs(nodeA.y - nodeB.y);
-        return distX + distY;
+        if (distX > distY) return 14 * distY + 10 * (distX - distY);
+        return 14 * distX + 10 * (distY - distX);
     }
 
     getNeighbors(node: GridNode): GridNode[] {
@@ -300,6 +315,12 @@ export default class App extends Vue {
         if (this.isInGrid(x + 1, y)) neighbors.push(this.nodes[y][x + 1]); // Right
         if (this.isInGrid(x, y - 1)) neighbors.push(this.nodes[y - 1][x]); // Up
         if (this.isInGrid(x, y + 1)) neighbors.push(this.nodes[y + 1][x]); // Down
+        if (this.isToggled) {
+            if (this.isInGrid(x + 1, y + 1)) neighbors.push(this.nodes[y + 1][x + 1]); // Down-Right
+            if (this.isInGrid(x - 1, y - 1)) neighbors.push(this.nodes[y - 1][x - 1]); // Up-Left
+            if (this.isInGrid(x + 1, y - 1)) neighbors.push(this.nodes[y - 1][x + 1]); // Up-Right
+            if (this.isInGrid(x - 1, y + 1)) neighbors.push(this.nodes[y + 1][x - 1]); // Down-Left
+        }
 
         return neighbors;
     }
