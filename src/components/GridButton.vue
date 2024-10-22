@@ -52,6 +52,9 @@ button {
 .visited {
     background-color: #adcabb;
 }
+.explored {
+    background-color: #6bae8ae4;
+}
 .path {
     background-color: #008000;
 }

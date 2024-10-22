@@ -22,7 +22,8 @@ export default class AStarLogo extends Vue {
     mounted() {
         const interval = setInterval(() => {
             this.fontNum = (this.fontNum + 1) % this.fonts.length;
-            (<HTMLElement>document.querySelector('#A')).style.fontFamily = this.fonts[this.fontNum];
+            let font = this.fonts[this.fontNum];
+            (<HTMLElement>document.querySelector('#A')).style.fontFamily = font;
         }, 5000);
     }
 
