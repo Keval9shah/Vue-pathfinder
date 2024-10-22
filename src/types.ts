@@ -11,6 +11,7 @@ export enum NodeType {
     destination = "destination",
     path = "path",
     visited = "visited",
+    explored = "explored",
 }
 
 export interface GridNode extends Coordinates {

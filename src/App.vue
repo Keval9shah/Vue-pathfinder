@@ -48,6 +48,7 @@ export default class App extends Vue {
     debounceWait: number = 0;
     mouseIsDown = false;
     isPathVisible = false;
+    visualDelay = 100;
     @Ref("fileInput") readonly fileInput!: HTMLInputElement;
 
     @Watch("columnSize")
@@ -191,6 +192,7 @@ export default class App extends Vue {
     }
 
     importJSON() {
+        this.isPathVisible && this.clearPath();
         let importedFile = {} as File | undefined | 0;
         importedFile = this.fileInput.files?.length && this.fileInput.files[0];
         if (!importedFile || (importedFile as File).type != "application/json") {
@@ -238,7 +240,7 @@ export default class App extends Vue {
     clearPath() {
         this.nodes.forEach((row) => {
             row.forEach((node) => {
-                if (node.type === NodeType.visited || node.type === NodeType.path) {
+                if (node.type === NodeType.visited || node.type === NodeType.path || node.type === NodeType.explored) {
                     node.type = NodeType.blank;
                     node.parent = null;
                     node.gCost = Infinity;
@@ -252,13 +254,18 @@ export default class App extends Vue {
 
     findPath() {
         if (!this.source.exists || !this.destination.exists) return;
+        this.isPathVisible && this.clearPath();
 
         const openList: GridNode[] = [];
         const closedList: GridNode[] = [];
 
         openList.push(this.nodes[this.source.y][this.source.x]);
 
+        const Path: GridNode[][] = [];
+        let i = 0;
         while (openList.length > 0) {
+            Path.push([]);
+
             // Find the node with the lowest fCost in the open list
             let currentNode = openList[0];
             for (let i = 1; i < openList.length; i++) {
@@ -273,16 +280,29 @@ export default class App extends Vue {
 
             // Check if we have reached the end node
             if (currentNode.x === this.destination.x && currentNode.y === this.destination.y) {
-                this.retracePath(this.nodes[this.source.y][this.source.x], this.nodes[this.destination.y][this.destination.x]);
+                this.retracePath(this.nodes[this.source.y][this.source.x], this.nodes[this.destination.y][this.destination.x], i);
                 this.isPathVisible = true;
                 return;
             }
 
+            if(currentNode.type != NodeType.source) {
+                ((currentNode,i) => {
+                    setTimeout(() => {
+                        currentNode.type = NodeType.explored;
+                    }, i*this.visualDelay);
+                })(currentNode,i);
+            }
             // Get neighboring nodes
             const neighbors = this.getNeighbors(currentNode);
             for (const neighbor of neighbors) {
                 if (closedList.includes(neighbor) || neighbor.type === "obstacle") continue;
-                if (neighbor.type != NodeType.destination) neighbor.type = NodeType.visited;
+                if (neighbor.type != NodeType.destination) {
+                    ((neighbor,i) => {
+                        setTimeout(() => {
+                            neighbor.type = NodeType.visited;
+                        }, i*this.visualDelay);
+                    })(neighbor,i);
+                }
                 // 1 is the distance between two neighboring nodes
                 const newMovementCostToNeighbor = currentNode.gCost + this.getDistance(currentNode, neighbor);
                 if (newMovementCostToNeighbor < neighbor.gCost || !openList.includes(neighbor)) {
@@ -294,6 +314,7 @@ export default class App extends Vue {
                     if (!openList.includes(neighbor)) openList.push(neighbor);
                 }
             }
+            i++;
         }
         this.isPathVisible = true;
     }
@@ -331,23 +352,20 @@ export default class App extends Vue {
         return x >= 0 && x < this.columnSize && y >= 0 && y < this.rowSize;
     }
 
-    retracePath(startNode: GridNode, endNode: GridNode) {
+    retracePath(startNode: GridNode, endNode: GridNode, i: number) {
         const path: GridNode[] = [];
-        let currentNode = endNode;
+        let currentNode = endNode.parent!;
 
         while (currentNode !== startNode) {
             path.push(currentNode);
             currentNode = currentNode.parent!;
         }
 
-        path.reverse();
-        path.pop();
-        this.highlightPath(path); // You can create a method to visually show the path
-    }
-
-    highlightPath(path: GridNode[]) {
-        path.forEach((node) => {
-            this.nodes[node.y][node.x].type = NodeType.path;
+        // visually show the path
+        path.forEach((node,index) => {
+            setTimeout(() => {
+                this.nodes[node.y][node.x].type = NodeType.path;
+            }, (index+i)*this.visualDelay);
         });
     }
 }
