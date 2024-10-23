@@ -121,12 +121,11 @@ export default class App extends Vue {
             }
         } else {
             if (currentNode.type == NodeType.source) {
-                currentNode.type = NodeType.blank;
                 this.source.exists = false;
-            } else {
-                currentNode.type = NodeType.blank;
+            } else if (currentNode.type == NodeType.destination) {
                 this.destination.exists = false;
             }
+            currentNode.type = NodeType.blank;
         }
     }
 
@@ -431,7 +430,7 @@ body {
 }
 
 .json-layout {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
 }
