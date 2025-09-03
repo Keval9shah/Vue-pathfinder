@@ -1,0 +1,41 @@
+.grid {
+    height: fit-content;
+    width: fit-content;
+    display: grid;
+    box-shadow: 2px 2px 7px rgb(167, 167, 167);
+}
+
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.grid-size-input {
+    font-size: 22px;
+    width: 45px;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.grid-size-input:hover,
+.grid-size-input:focus {
+    text-decoration: underline;
+}
+
+.label {
+    font-size: 10px;
+    font-weight: bold;
+    height: fit-content;
+    color: rgb(90, 90, 90);
+    font-weight: 600;
+}
+
+.font-caveat {
+    font-family: "Caveat", cursive;
+}
+
+.main-section {
+    display: flex;
+    width: fit-content;
+}

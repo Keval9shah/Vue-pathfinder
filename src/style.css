@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    background-color: rgb(218, 218, 218);
+}
+
+.button {
+    cursor: pointer;
+    outline: none;
+    background-color: rgb(244, 244, 244);
+    border-radius: 2px;
+    border: 1px solid black;
+    padding: 1px 8px;
+}
+
+.json-layout {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+a {
+    text-decoration: underline;
+    color: black;
+}

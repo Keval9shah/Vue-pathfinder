@@ -13,7 +13,7 @@
             <button @click="resetLayout" class="button">Reset</button>
             <button @click="findPath" class="button ms-2">Find Path</button>
             <button @click="clearPath" class="button ms-2">Clear Path</button>
-            <ToggleSwitch v-model="isToggled" @toggle="onMoveTypeChanged">Diagonal Moves</ToggleSwitch>
+            <ToggleSwitch v-model="isDiagonalToggled" @toggle="onMoveTypeChanged">Diagonal Moves</ToggleSwitch>
         </div>
         <div class="main-section">
             <div :style="'grid-template-columns: repeat(' + columns + ', 52px);'" class="grid">
@@ -33,6 +33,8 @@ import AStarLogo from "@/components/AStarLogo.vue";
 import ToggleSwitch from "@/components/ToggleSwitch.vue";
 import { GridNode, Coordinates, NodeType, AstarFile } from "@/types";
 import { debounce, showToastWithPromise, showToast } from "@/utils";
+import './app-style.css'
+import './style.css'
 
 @Component({ components: { GridButton, AStarLogo, ToggleSwitch } })
 export default class App extends Vue {
@@ -41,7 +43,7 @@ export default class App extends Vue {
     columnSize = 0;
     rows = 0;
     columns = 0;
-    isToggled = false;
+    isDiagonalToggled = false;
     nodes: GridNode[][] = [];
     source = { exists: false } as GridNode;
     destination = { exists: false } as GridNode;
@@ -62,7 +64,7 @@ export default class App extends Vue {
     }
 
     onMoveTypeChanged(newVal: boolean) {
-        this.isToggled = newVal;
+        this.isDiagonalToggled = newVal;
         if (this.isPathVisible) {
             this.clearPath();
             this.findPath();
@@ -319,7 +321,7 @@ export default class App extends Vue {
     }
 
     getDistance(nodeA: GridNode, nodeB: GridNode): number {
-        if (!this.isToggled) {
+        if (!this.isDiagonalToggled) {
             return (Math.abs(nodeA.x - nodeB.x) + Math.abs(nodeA.y - nodeB.y)) * 10;
         }
         const distX = Math.abs(nodeA.x - nodeB.x);
@@ -337,7 +339,7 @@ export default class App extends Vue {
         if (this.isInGrid(x + 1, y)) neighbors.push(this.nodes[y][x + 1]); // Right
         if (this.isInGrid(x, y - 1)) neighbors.push(this.nodes[y - 1][x]); // Up
         if (this.isInGrid(x, y + 1)) neighbors.push(this.nodes[y + 1][x]); // Down
-        if (this.isToggled) {
+        if (this.isDiagonalToggled) {
             if (this.isInGrid(x + 1, y + 1)) neighbors.push(this.nodes[y + 1][x + 1]); // Down-Right
             if (this.isInGrid(x - 1, y - 1)) neighbors.push(this.nodes[y - 1][x - 1]); // Up-Left
             if (this.isInGrid(x + 1, y - 1)) neighbors.push(this.nodes[y - 1][x + 1]); // Up-Right
@@ -369,74 +371,3 @@ export default class App extends Vue {
     }
 }
 </script>
-
-<style scoped>
-.grid {
-    height: fit-content;
-    width: fit-content;
-    display: grid;
-    box-shadow: 2px 2px 7px rgb(167, 167, 167);
-}
-
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.grid-size-input {
-    font-size: 22px;
-    width: 45px;
-    border: none;
-    outline: none;
-    background: transparent;
-}
-
-.grid-size-input:hover,
-.grid-size-input:focus {
-    text-decoration: underline;
-}
-
-.label {
-    font-size: 10px;
-    font-weight: bold;
-    height: fit-content;
-    color: rgb(90, 90, 90);
-    font-weight: 600;
-}
-
-.font-caveat {
-    font-family: "Caveat", cursive;
-}
-
-.main-section {
-    display: flex;
-    width: fit-content;
-}
-</style>
-
-<style>
-body {
-    margin: 0;
-    background-color: rgb(218, 218, 218);
-}
-
-.button {
-    cursor: pointer;
-    outline: none;
-    background-color: rgb(244, 244, 244);
-    border-radius: 2px;
-    border: 1px solid black;
-    padding: 1px 8px;
-}
-
-.json-layout {
-    position: fixed;
-    top: 0;
-    right: 0;
-}
-
-a {
-    text-decoration: underline;
-    color: black;
-}
-</style>
